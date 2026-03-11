@@ -1,0 +1,96 @@
+body {
+    background: rgb(20, 20, 20);
+    margin: 0;
+    padding: 0;
+    padding-top: 33px; 
+}
+
+.NavBar {
+    background-color:rgb(38, 38, 38);
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 0;
+    height: 100%;
+    width: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding-right: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.name {
+    color: white;
+    font-size: 20px;
+    font-family: cursive;
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.nav-links-wrapper {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    flex-grow: 0;
+}
+
+.navlinks-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.navlink {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-family: cursive;
+    position: relative;
+    z-index: 9999;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.code-ability-box, .code-secure-box {
+    color: white !important;
+
+
+}
+html {
+    scroll-behavior: smooth; 
+}
+#homeboy:hover {
+
+    background-color: #000000;
+    transform: scale(1.2);
+
+}
+#abt:hover {
+
+    background-color: #000000;
+    transform: scale(1.2);
+
+}
+#service:hover {
+
+    background-color: #000000;
+    transform: scale(1.2);
+
+}
+#prj:hover {
+
+    background-color: #000000;
+    transform: scale(1.2);
+
+}
+#contact:hover {
+
+    background-color: #000000;
+    transform: scale(1.2);
+
+}
