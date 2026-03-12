@@ -1,69 +1,725 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhay Krishna — Roblox Scripter</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700;900&family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#02040a;--c1:#00ffe7;--c2:#ff003c;--c3:#ffe600;
+  --border:rgba(0,255,231,.12);--text:#a8c8d8;--muted:#3a5a6a;
+  --glow1:0 0 30px rgba(0,255,231,.4);--glow2:0 0 30px rgba(255,0,60,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;cursor:none}
+ 
+#cur{position:fixed;width:8px;height:8px;background:var(--c1);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:screen;transition:transform .08s,background .15s}
+#cur2{position:fixed;width:32px;height:32px;border:1px solid var(--c1);border-radius:50%;pointer-events:none;z-index:9998;opacity:.5;transition:border-color .2s,transform .1s}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+ 
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:space-between;align-items:center;padding:.9rem 4rem;background:rgba(2,4,10,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:6px;color:var(--c1);text-shadow:0 0 20px var(--c1);position:relative}
+.logo::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--c1),transparent)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--c1);transition:width .3s}
+.nav-links a:hover{color:var(--c1)}
+.nav-links a:hover::after{width:100%}
+ 
+.hero{min-height:100vh;display:flex;align-items:center;padding:0 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:15%;width:1px;height:120vh;background:linear-gradient(180deg,transparent,var(--c1),transparent);opacity:.18;transform:rotate(15deg)}
+.hero::after{content:'';position:absolute;top:-100px;right:28%;width:1px;height:120vh;background:linear-gradient(180deg,transparent,var(--c2),transparent);opacity:.1;transform:rotate(15deg)}
+.hero-content{position:relative;z-index:10;max-width:700px}
+ 
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:5px;color:var(--c2);text-transform:uppercase;margin-bottom:1.3rem;display:flex;align-items:center;gap:.8rem;opacity:0;animation:fadeUp .6s .2s ease forwards}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--c2);box-shadow:var(--glow2);animation:pdot 1.5s ease-in-out infinite}
+@keyframes pdot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(2);opacity:.3}}
+ 
+.hname{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,10vw,9rem);line-height:.88;letter-spacing:4px;color:#fff;margin-bottom:.35rem;opacity:0;animation:fadeUp .7s .35s ease forwards}
+.glitch{position:relative;color:var(--c1);text-shadow:0 0 40px var(--c1);display:inline-block;animation:glitch 5s infinite}
+@keyframes glitch{
+  0%,88%,100%{clip-path:none;transform:none}
+  90%{clip-path:inset(15% 0 65% 0);transform:translate(-5px,0);color:var(--c2)}
+  92%{clip-path:inset(60% 0 10% 0);transform:translate(5px,0);color:var(--c3)}
+  94%{clip-path:none;transform:none;color:var(--c1)}
+  96%{clip-path:inset(35% 0 45% 0);transform:translate(-3px,0)}
+  98%{clip-path:none;transform:none}
+}
+.hsub{font-family:'Bebas Neue',sans-serif;font-size:clamp(1rem,2.5vw,2rem);letter-spacing:8px;color:var(--muted);margin-bottom:2rem;opacity:0;animation:fadeUp .7s .5s ease forwards}
+.hdesc{font-size:1rem;line-height:1.95;color:var(--text);max-width:460px;margin-bottom:2.5rem;border-left:2px solid var(--c1);padding-left:1.2rem;opacity:0;animation:fadeUp .7s .65s ease forwards}
+.hbtns{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeUp .7s .8s ease forwards}
+ 
+.btn{font-family:'Share Tech Mono',monospace;font-size:.78rem;letter-spacing:3px;text-transform:uppercase;padding:.9rem 2.2rem;text-decoration:none;cursor:none;display:inline-block;transition:all .22s;border:none}
+.btn-neon{background:transparent;color:var(--c1);border:1px solid var(--c1)}
+.btn-neon:hover{background:var(--c1);color:#000;box-shadow:var(--glow1);transform:translateY(-2px)}
+.btn-fire{background:var(--c2);color:#fff;border:1px solid var(--c2)}
+.btn-fire:hover{box-shadow:var(--glow2);transform:translateY(-2px)}
+ 
+.hero-term{position:absolute;right:5%;top:50%;transform:translateY(-50%);background:rgba(1,3,8,.95);border:1px solid var(--border);width:340px;box-shadow:var(--glow1),0 40px 80px rgba(0,0,0,.7);opacity:0;animation:slideIn .8s .9s ease forwards;z-index:10}
+@keyframes slideIn{from{opacity:0;transform:translateY(-50%) translateX(40px)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
+.tbar{display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;background:rgba(0,255,231,.04);border-bottom:1px solid var(--border)}
+.tbar .d{width:10px;height:10px;border-radius:50%}
+.tbar .d:nth-child(1){background:#ff5f57}.tbar .d:nth-child(2){background:#febc2e}.tbar .d:nth-child(3){background:#28c840}
+.ttitle{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--muted);margin-left:auto;letter-spacing:1px}
+.tbody{padding:1.2rem;font-family:'Share Tech Mono',monospace;font-size:.72rem;line-height:2}
+.tg{color:#28c840}.tc{color:var(--c1)}.tr{color:var(--c2)}.ty{color:var(--c3)}.tm{color:var(--muted)}
+.tcur{display:inline-block;width:8px;height:1em;background:var(--c1);animation:blink 1s step-end infinite;vertical-align:text-bottom}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+ 
+.sw{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:7rem 4rem}
+.sh{display:flex;align-items:center;gap:1.2rem;margin-bottom:4rem}
+.sn{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--c1);letter-spacing:2px;opacity:.6}
+.st{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;color:#fff;text-transform:uppercase}
+.sl{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+ 
+/* ABOUT */
+.abg{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.atext p{margin-bottom:1.1rem;line-height:1.9;font-size:1rem}
+.atext strong{color:var(--c1)}
+.skgrid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.sk{font-family:'Share Tech Mono',monospace;font-size:.7rem;padding:.55rem .8rem;border:1px solid var(--border);color:var(--muted);transition:all .2s;display:flex;align-items:center;gap:.5rem}
+.sk::before{content:'▸';color:var(--c1);font-size:.55rem;flex-shrink:0}
+.sk:hover{border-color:var(--c1);color:var(--c1);background:rgba(0,255,231,.04);box-shadow:var(--glow1);transform:translateX(4px)}
+ 
+/* AVAILABILITY */
+.avail-wrap{display:flex;gap:1rem;flex-wrap:wrap}
+.month-block{flex:1;min-width:120px;border:1px solid var(--border);padding:1rem 1.2rem;transition:border-color .25s}
+.month-block.open{border-color:rgba(0,255,231,.35)}
+.month-block.limited{border-color:rgba(255,230,0,.25)}
+.month-name{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem}
+.month-block.open .month-name{color:var(--c1)}
+.month-block.limited .month-name{color:var(--c3)}
+.month-days{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;color:#fff;margin-bottom:.25rem}
+.month-block.open .month-days{color:var(--c1);text-shadow:var(--glow1)}
+.month-block.limited .month-days{color:var(--c3)}
+.month-note{font-size:.75rem;color:var(--muted);line-height:1.4}
+.avail-note{margin-top:1.2rem;font-size:.85rem;color:var(--muted);line-height:1.7;font-style:italic}
+ 
+/* SERVICES */
+.svb{background:rgba(0,255,231,.012);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.svg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.svc{background:rgba(2,4,10,.85);border:1px solid var(--border);padding:2.2rem 1.8rem;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;cursor:none}
+.svc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--c1),var(--c2));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.svc::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(0,255,231,.05),transparent 70%);opacity:0;transition:opacity .3s}
+.svc:hover{transform:translateY(-6px);border-color:rgba(0,255,231,.3);box-shadow:0 20px 60px rgba(0,0,0,.4),var(--glow1)}
+.svc:hover::before{transform:scaleX(1)}
+.svc:hover::after{opacity:1}
+.sico{font-size:2.2rem;margin-bottom:1rem;display:block}
+.snm{font-family:'Bebas Neue',sans-serif;letter-spacing:3px;font-size:1.05rem;color:var(--c1);margin-bottom:.6rem}
+.sds{font-size:.88rem;color:var(--muted);line-height:1.7}
+ 
+/* CODE */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.ccard{background:#010306;border:1px solid var(--border);overflow:hidden;transition:border-color .3s,box-shadow .3s,transform .2s}
+.ccard:hover{border-color:rgba(0,255,231,.4);box-shadow:var(--glow1),0 30px 60px rgba(0,0,0,.5)}
+.ctop{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;background:rgba(0,255,231,.03);border-bottom:1px solid var(--border)}
+.dots{display:flex;gap:.4rem}
+.dots span{width:10px;height:10px;border-radius:50%}
+.dots span:nth-child(1){background:#ff5f57}.dots span:nth-child(2){background:#febc2e}.dots span:nth-child(3){background:#28c840}
+.fn2{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--muted)}
+.ctg{font-family:'Share Tech Mono',monospace;font-size:.58rem;border:1px solid var(--c1);color:var(--c1);padding:.1rem .5rem;letter-spacing:2px}
+pre{padding:1.4rem;font-family:'Share Tech Mono',monospace;font-size:.72rem;line-height:1.85;overflow-x:auto;max-height:290px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+pre::-webkit-scrollbar{width:3px;height:3px}
+pre::-webkit-scrollbar-thumb{background:var(--border)}
+.kw{color:#ff79c6}.fn{color:#50fa7b}.str{color:#f1fa8c}.num{color:#bd93f9}.cm{color:#3d5a70;font-style:italic}.var{color:#8be9fd}.prop{color:#ffb86c}.op{color:#ff79c6}
+.cfoot{padding:.9rem 1rem;border-top:1px solid var(--border);font-size:.8rem;color:var(--muted);line-height:1.5}
+ 
+/* PRICING */
+.pw{display:flex;justify-content:center;gap:2.5rem;flex-wrap:wrap}
+.pcard{background:rgba(2,4,10,.92);border:1px solid var(--border);padding:3rem 2.5rem;min-width:280px;text-align:center;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.pcard.feat{border-color:rgba(0,255,231,.4);box-shadow:var(--glow1),0 0 80px rgba(0,255,231,.06)}
+.pcard:hover{transform:translateY(-8px);box-shadow:0 30px 80px rgba(0,0,0,.5),var(--glow1)}
+.pcard .fg{position:absolute;inset:-1px;background:linear-gradient(135deg,var(--c1),var(--c2),var(--c3),var(--c1));background-size:300%;z-index:-1;animation:bgspin 4s linear infinite;opacity:0}
+.pcard.feat .fg{opacity:1}
+@keyframes bgspin{0%{background-position:0%}100%{background-position:300%}}
+.pcard .fi{position:absolute;inset:1px;background:rgba(2,4,10,.97);z-index:-1}
+.flbl{position:absolute;top:0;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,var(--c1),var(--c2));color:#000;font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:3px;padding:.25rem 1.2rem;font-weight:700}
+.ptier{font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:1.5rem}
+.pbig{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--c1);text-shadow:var(--glow1);margin-bottom:.2rem}
+.pbig sup{font-size:2rem;vertical-align:top;margin-top:.8rem}
+.pnote{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:2px;margin-bottom:2rem}
+.plist{list-style:none;text-align:left;margin-bottom:2rem}
+.plist li{padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.88rem;display:flex;align-items:center;gap:.6rem}
+.plist li::before{content:'⬡';color:var(--c1);font-size:.65rem;flex-shrink:0}
+ 
+/* ALSO */
+.also-intro{font-size:1rem;line-height:1.85;color:var(--text);max-width:560px;margin-bottom:3rem}
+.also-intro em{color:var(--c1);font-style:normal}
+.also-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.also-card{border:1px solid var(--border);padding:1.8rem;position:relative;overflow:hidden;transition:border-color .25s,transform .25s;cursor:none}
+.also-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 100%,rgba(0,255,231,.04),transparent 60%);opacity:0;transition:opacity .3s}
+.also-card:hover{border-color:rgba(0,255,231,.3);transform:translateY(-4px)}
+.also-card:hover::after{opacity:1}
+.also-icon{font-size:1.6rem;margin-bottom:.9rem;display:block}
+.also-name{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:#fff;margin-bottom:.5rem}
+.also-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
+.tag{font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:.2rem .55rem;border:1px solid var(--border);color:var(--muted);letter-spacing:1px;transition:all .2s}
+.also-card:hover .tag{border-color:rgba(0,255,231,.2);color:rgba(0,255,231,.5)}
+.also-desc{font-size:.85rem;color:var(--muted);line-height:1.65}
+ 
+/* CONTACT */
+.cntg{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.cintro{font-size:1rem;line-height:1.9;margin-bottom:2rem}
+.clinks{display:flex;flex-direction:column;gap:.8rem}
+.clink{display:flex;align-items:center;gap:1rem;padding:1rem 1.4rem;border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.78rem;transition:all .2s;position:relative;overflow:hidden}
+.clink::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,rgba(0,255,231,.07),transparent);transition:width .3s}
+.clink:hover{border-color:var(--c1);color:var(--c1);transform:translateX(6px)}
+.clink:hover::before{width:100%}
+.cico{font-size:1.1rem;min-width:20px;text-align:center}
+.cform{display:flex;flex-direction:column;gap:1rem}
+.flbl{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:.3rem}
+.finp,.ftxt{width:100%;background:rgba(0,255,231,.015);border:1px solid var(--border);color:var(--text);padding:.85rem 1rem;font-family:'Exo 2',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s,box-shadow .2s;cursor:none}
+.finp:focus,.ftxt:focus{border-color:var(--c1);box-shadow:var(--glow1)}
+.ftxt{resize:vertical;min-height:110px;line-height:1.6}
+ 
+/* MARQUEE */
+.marq{overflow:hidden;padding:.9rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,255,231,.012);position:relative;z-index:10}
+.mtrack{display:flex;gap:2.5rem;white-space:nowrap;animation:marqA 22s linear infinite;font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.mtrack .hi{color:var(--c1)}
+@keyframes marqA{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+ 
+footer{position:relative;z-index:10;padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+footer p{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--muted);letter-spacing:1px}
+.flogo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:4px;color:var(--c1);text-shadow:var(--glow1)}
+ 
+.rev{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rev.on{opacity:1;transform:translateY(0)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+ 
+@media(max-width:960px){
+  nav{padding:.8rem 1.5rem}
+  .sw{padding:5rem 1.5rem}
+  .hero{padding:6rem 1.5rem 3rem;flex-direction:column;justify-content:center;align-items:flex-start}
+  .hero-term{position:static;transform:none;width:100%;margin-top:2rem;animation:fadeUp .8s .9s ease forwards}
+  .abg,.cntg,.cgrid,.also-grid{grid-template-columns:1fr}
+  .svg{grid-template-columns:1fr 1fr}
+  footer{flex-direction:column;gap:.5rem;text-align:center}
+}
+@media(max-width:600px){
+  .svg,.also-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .hname{font-size:3.5rem}
+}
+</style>
 </head>
 <body>
-<div class="NavBar">
-    <h3 class="name">Abhay Krishna</h3>
-    <div class="nav-links-wrapper">
-        <div class="navlinks-container">
-            <a id="homeboy" class="navlink" href="#home">Home</a>
-            <a id="abt" class="navlink" href="#about">About</a>
-            <a id="prj" class="navlink" href="#projects">Projects</a>
-            <a id="service" class="navlink" href="#services">Services</a>
-            <a id="contact" class="navlink" href="#contact">Contact</a>
-        </div>
+ 
+<div id="cur"></div>
+<div id="cur2"></div>
+<canvas id="bgCanvas"></canvas>
+ 
+<nav>
+  <div class="logo">AK_</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#showcase">Scripts</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Hire</a></li>
+  </ul>
+</nav>
+ 
+<!-- HERO -->
+<div class="hero" id="home">
+  <div class="hero-content">
+    <div class="eyebrow"><span class="pdot"></span>taking commissions &middot; from $20</div>
+    <h1 class="hname">ABHAY<br><span class="glitch">KRISHNA</span></h1>
+    <div class="hsub">Roblox &middot; Lua Scripter</div>
+    <p class="hdesc">I script Roblox games. Combat, datastores, AI, UI &mdash; stuff that actually works and doesn&rsquo;t fall apart when someone tries to break it.</p>
+    <div class="hbtns">
+      <a href="#contact" class="btn btn-fire">Get In Touch</a>
+      <a href="#showcase" class="btn btn-neon">See My Work</a>
     </div>
+  </div>
+ 
+  <div class="hero-term">
+    <div class="tbar"><span class="d"></span><span class="d"></span><span class="d"></span><span class="ttitle">abhay@roblox ~ terminal</span></div>
+    <div class="tbody">
+      <div class="tl"><span class="tg">abhay</span><span class="tm">@</span><span class="tc">scripter</span><span class="tm"> ~ $</span> <span class="ty">whoami</span></div>
+      <div class="tl"><span class="tc">Roblox Lua Game Scripter</span></div>
+      <div class="tl" style="margin-top:.3rem"><span class="tg">abhay</span><span class="tm">@</span><span class="tc">scripter</span><span class="tm"> ~ $</span> <span class="ty">skills --list</span></div>
+      <div class="tl"><span class="tm">&#9658;</span> <span class="tc">Combat Systems</span></div>
+      <div class="tl"><span class="tm">&#9658;</span> <span class="tc">Economy &amp; DataStores</span></div>
+      <div class="tl"><span class="tm">&#9658;</span> <span class="tc">NPC AI &amp; Pathfinding</span></div>
+      <div class="tl"><span class="tm">&#9658;</span> <span class="tc">GUI &amp; UI Scripting</span></div>
+      <div class="tl" style="margin-top:.3rem"><span class="tg">abhay</span><span class="tm">@</span><span class="tc">scripter</span><span class="tm"> ~ $</span> <span class="ty">status</span></div>
+      <div class="tl"><span class="tg">&#10003; Available</span>&nbsp;&nbsp;<span class="tr">$20/script</span>&nbsp;&nbsp;<span class="ty">negotiable</span></div>
+      <div class="tl" style="margin-top:.3rem"><span class="tg">abhay</span><span class="tm">@</span><span class="tc">scripter</span><span class="tm"> ~ $</span> <span class="tcur"></span></div>
+    </div>
+  </div>
 </div>
-    <div  class="code-ability-box text"></div>
-        <pre><code>
-        </code></pre>
-    <div>
-        <div class="code-secure-box text"></div>
-        <pre><code>-- 🚨 ILLEGAL and FRAGILE: Steal engine metamethods via debug.info
-local function stealMetamethod(thunk)
-    local stolen
-    xpcall(thunk, function() stolen = debug.info(2, "f") end)
-    return stolen
-end
-
-local rawInstanceIndex = stealMetamethod(function()
-    return (game :: any)["_definitely_not_a_real_property"]
-end)
-
-local rawInstanceNewIndex = stealMetamethod(function()
-    (game :: any)["_definitely_not_a_real_property"] = nil
-end)
-
--- 🤯 Obfuscated ternary chain with falsy traps
-local function giveDoubleGold() return true end
-local reward = giveDoubleGold() and 1000 or 500
-
--- 💀 Swap variables using a "magic" table
-local a, b = "hello", "world"
-a, b = b, a
-
--- 🌀 Use raw metamethods in a tight loop (for maximum "cringe")
-local function crazyLoop()
-    local parts = {}
-    for i = 1, 1000 do
-        local p = Instance.new("Part")
-        p.CFrame = CFrame.new(i, 0, 0)
-        p.Parent = workspace
-        table.insert(parts, p)
-    end
-
-    for i = 1, #parts do
-        rawInstanceNewIndex(parts[i], "CFrame", parts[i] )
-        </code></pre>
+ 
+<div class="marq">
+  <div class="mtrack">
+    <span class="hi">Roblox Lua</span> &middot; Combat Systems &middot; Economy Scripts &middot; GUI Scripting &middot; NPC AI &middot; DataStores &middot; ModuleScripts &middot; RemoteEvents &middot; TweenService &middot; Pathfinding &middot; Anti-Exploit &middot; Hitboxes &middot;&nbsp;
+    <span class="hi">Roblox Lua</span> &middot; Combat Systems &middot; Economy Scripts &middot; GUI Scripting &middot; NPC AI &middot; DataStores &middot; ModuleScripts &middot; RemoteEvents &middot; TweenService &middot; Pathfinding &middot; Anti-Exploit &middot; Hitboxes &middot;&nbsp;
+    <span class="hi">Roblox Lua</span> &middot; Combat Systems &middot; Economy Scripts &middot; GUI Scripting &middot; NPC AI &middot; DataStores &middot; ModuleScripts &middot; RemoteEvents &middot; TweenService &middot; Pathfinding &middot; Anti-Exploit &middot; Hitboxes &middot;&nbsp;
+  </div>
+</div>
+ 
+<!-- ABOUT -->
+<div id="about" style="position:relative;z-index:10">
+<div class="sw">
+  <div class="sh rev"><span class="sn">01</span><h2 class="st">About Me</h2><div class="sl"></div></div>
+  <div class="abg">
+    <div class="atext rev">
+      <p>Hey, I&rsquo;m <strong>Abhay Krishna</strong>. I&rsquo;ve been scripting in Roblox Lua for 3+ years &mdash; mostly game systems people actually notice.</p>
+      <p>I keep my code clean and modular. No spaghetti, no hardcoded nonsense. If something breaks six months later, that&rsquo;s on me and I&rsquo;ll fix it.</p>
+      <p>I&rsquo;m not available all year &mdash; I take on work in specific windows. Check the availability section below before reaching out.</p>
     </div>
-    <div id="home">
-        <h1 id="main-name"  class="name">Hi, I'm <br> Abhay Krishna</h1>
-        <p class="description">I'm a </p>
+    <div class="rev" style="transition-delay:.1s">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:1rem">Tech Stack</div>
+      <div class="skgrid">
+        <div class="sk">Lua / Luau</div><div class="sk">ModuleScripts</div>
+        <div class="sk">RemoteEvents</div><div class="sk">DataStores</div>
+        <div class="sk">TweenService</div><div class="sk">PathfindingService</div>
+        <div class="sk">RunService</div><div class="sk">BodyMovers</div>
+        <div class="sk">ScreenGuis</div><div class="sk">Hitbox Systems</div>
+        <div class="sk">AnimationController</div><div class="sk">Anti-Exploit</div>
+      </div>
     </div>
+  </div>
+</div>
+</div>
+ 
+<!-- AVAILABILITY -->
+<div id="availability" style="position:relative;z-index:10;background:rgba(0,255,231,.008);border-top:1px solid var(--border)">
+<div class="sw" style="padding-top:4rem;padding-bottom:4rem">
+  <div class="sh rev"><span class="sn">01.5</span><h2 class="st">Availability</h2><div class="sl"></div></div>
+  <div class="avail-wrap rev">
+    <div class="month-block open">
+      <div class="month-name">April</div>
+      <div class="month-days">30</div>
+      <div class="month-note">days open</div>
+    </div>
+    <div class="month-block open">
+      <div class="month-name">May</div>
+      <div class="month-days">30</div>
+      <div class="month-note">days open</div>
+    </div>
+    <div class="month-block limited">
+      <div class="month-name">September</div>
+      <div class="month-days">10</div>
+      <div class="month-note">days only</div>
+    </div>
+    <div class="month-block limited">
+      <div class="month-name">December</div>
+      <div class="month-days">20</div>
+      <div class="month-note">days only</div>
+    </div>
+  </div>
+  <p class="avail-note rev">Around 90 days a year total. Outside these windows I&rsquo;m not taking new work &mdash; so if you&rsquo;re planning something, reach out early.</p>
+</div>
+</div>
+ 
+<!-- SERVICES -->
+<div id="services" class="svb" style="position:relative;z-index:10">
+<div class="sw">
+  <div class="sh rev"><span class="sn">02</span><h2 class="st">Services</h2><div class="sl"></div></div>
+  <div class="svg">
+    <div class="svc rev"><span class="sico">&#9876;&#65039;</span><div class="snm">Combat Systems</div><p class="sds">Melee, ranged, combos, hitboxes, cooldowns. If it needs to feel good to play, I can build it.</p></div>
+    <div class="svc rev" style="transition-delay:.05s"><span class="sico">&#128176;</span><div class="snm">Economy &amp; DataStores</div><p class="sds">Coins, shops, inventories, player data that actually saves. Locked down against exploiters.</p></div>
+    <div class="svc rev" style="transition-delay:.1s"><span class="sico">&#129302;</span><div class="snm">NPC AI &amp; Bosses</div><p class="sds">Patrol, aggro, attacks, multi-phase bosses. State machines that don&rsquo;t spaghetti out.</p></div>
+    <div class="svc rev" style="transition-delay:.15s"><span class="sico">&#128421;&#65039;</span><div class="snm">GUI &amp; Interfaces</div><p class="sds">HUDs, menus, inventory screens &mdash; animated and clean. Not the default Roblox template look.</p></div>
+    <div class="svc rev" style="transition-delay:.2s"><span class="sico">&#128507;</span><div class="snm">Game Systems</div><p class="sds">Round loops, leaderboards, teams, matchmaking. The backend that holds everything together.</p></div>
+    <div class="svc rev" style="transition-delay:.25s"><span class="sico">&#128295;</span><div class="snm">Fixes &amp; Optimization</div><p class="sds">Something broken or laggy? I&rsquo;ll read through your scripts and sort it out.</p></div>
+  </div>
+</div>
+</div>
+ 
+<!-- CODE SHOWCASE -->
+<div id="showcase" style="position:relative;z-index:10">
+<div class="sw">
+  <div class="sh rev"><span class="sn">03</span><h2 class="st">Code Showcase</h2><div class="sl"></div></div>
+  <div class="cgrid">
+ 
+    <div class="ccard rev">
+      <div class="ctop"><div class="dots"><span></span><span></span><span></span></div><span class="fn2">CombatSystem.lua</span><span class="ctg">Combat</span></div>
+      <pre><code><span class="cm">-- Combo Melee Combat System</span>
+<span class="kw">local</span> <span class="var">COMBO_WINDOW</span> = <span class="num">0.8</span>
+<span class="kw">local</span> <span class="var">HITBOX_SIZE</span>  = <span class="fn">Vector3</span>.new(<span class="num">6</span>,<span class="num">5</span>,<span class="num">6</span>)
+<span class="kw">local</span> <span class="var">Combat</span> = {}
+<span class="var">Combat</span>.__index = <span class="var">Combat</span>
+ 
+<span class="kw">function</span> <span class="fn">Combat</span>.<span class="fn">new</span>(<span class="var">char</span>)
+  <span class="kw">return</span> <span class="fn">setmetatable</span>({
+    <span class="prop">character</span>=<span class="var">char</span>, <span class="prop">combo</span>=<span class="num">0</span>,
+    <span class="prop">lastHit</span>=<span class="num">0</span>, <span class="prop">cooldown</span>=<span class="kw">false</span>
+  }, <span class="var">Combat</span>)
+<span class="kw">end</span>
+ 
+<span class="kw">function</span> <span class="fn">Combat</span>:<span class="fn">Attack</span>()
+  <span class="kw">if</span> <span class="var">self</span>.<span class="prop">cooldown</span> <span class="kw">then return</span> <span class="kw">end</span>
+  <span class="kw">local</span> <span class="var">now</span> = <span class="fn">tick</span>()
+  <span class="kw">if</span> <span class="var">now</span> - <span class="var">self</span>.<span class="prop">lastHit</span> &gt; <span class="var">COMBO_WINDOW</span> <span class="kw">then</span>
+    <span class="var">self</span>.<span class="prop">combo</span> = <span class="num">0</span>
+  <span class="kw">end</span>
+  <span class="var">self</span>.<span class="prop">combo</span> += <span class="num">1</span>
+  <span class="var">self</span>.<span class="prop">lastHit</span> = <span class="var">now</span>
+  <span class="var">self</span>:<span class="fn">Hitbox</span>(<span class="num">10</span> + <span class="var">self</span>.<span class="prop">combo</span> * <span class="num">3</span>)
+<span class="kw">end</span>
+ 
+<span class="kw">function</span> <span class="fn">Combat</span>:<span class="fn">Hitbox</span>(<span class="var">dmg</span>)
+  <span class="kw">local</span> <span class="var">cf</span> = <span class="var">self</span>.<span class="prop">character</span>.HumanoidRootPart.CFrame
+             * <span class="fn">CFrame</span>.new(<span class="num">0</span>,<span class="num">0</span>,<span class="op">-</span><span class="num">3</span>)
+  <span class="kw">for</span> _,<span class="var">p</span> <span class="kw">in</span> <span class="fn">workspace</span>:<span class="fn">GetPartBoundsInBox</span>(<span class="var">cf</span>,<span class="var">HITBOX_SIZE</span>) <span class="kw">do</span>
+    <span class="kw">local</span> <span class="var">h</span> = <span class="var">p</span>.Parent:<span class="fn">FindFirstChild</span>(<span class="str">"Humanoid"</span>)
+    <span class="kw">if</span> <span class="var">h</span> <span class="kw">and</span> <span class="var">p</span>.Parent ~= <span class="var">self</span>.<span class="prop">character</span> <span class="kw">then</span>
+      <span class="var">h</span>:<span class="fn">TakeDamage</span>(<span class="var">dmg</span>)
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="kw">return</span> <span class="var">Combat</span></code></pre>
+      <div class="cfoot">&#9876;&#65039; Dynamic combo damage with spatial hitboxes &mdash; smooth and expandable.</div>
+    </div>
+ 
+    <div class="ccard rev" style="transition-delay:.1s">
+      <div class="ctop"><div class="dots"><span></span><span></span><span></span></div><span class="fn2">DataManager.lua</span><span class="ctg">DataStore</span></div>
+      <pre><code><span class="cm">-- Secure Player DataStore Manager</span>
+<span class="kw">local</span> <span class="var">DSS</span>   = <span class="fn">game</span>:<span class="fn">GetService</span>(<span class="str">"DataStoreService"</span>)
+<span class="kw">local</span> <span class="var">Plrs</span>  = <span class="fn">game</span>:<span class="fn">GetService</span>(<span class="str">"Players"</span>)
+<span class="kw">local</span> <span class="var">Store</span> = <span class="var">DSS</span>:<span class="fn">GetDataStore</span>(<span class="str">"PlayerData_v3"</span>)
+<span class="kw">local</span> <span class="var">cache</span> = {}
+ 
+<span class="kw">local</span> <span class="var">DEFAULT</span> = {
+  <span class="prop">coins</span>=<span class="num">0</span>, <span class="prop">level</span>=<span class="num">1</span>, <span class="prop">xp</span>=<span class="num">0</span>,
+  <span class="prop">inventory</span>={},
+  <span class="prop">stats</span>={<span class="prop">kills</span>=<span class="num">0</span>,<span class="prop">deaths</span>=<span class="num">0</span>}
+}
+ 
+<span class="kw">local function</span> <span class="fn">deepCopy</span>(<span class="var">t</span>)
+  <span class="kw">local</span> <span class="var">c</span>={}
+  <span class="kw">for</span> <span class="var">k</span>,<span class="var">v</span> <span class="kw">in</span> <span class="fn">pairs</span>(<span class="var">t</span>) <span class="kw">do</span>
+    <span class="var">c</span>[<span class="var">k</span>]=<span class="fn">type</span>(<span class="var">v</span>)==<span class="str">"table"</span> <span class="kw">and</span> <span class="fn">deepCopy</span>(<span class="var">v</span>) <span class="kw">or</span> <span class="var">v</span>
+  <span class="kw">end</span>; <span class="kw">return</span> <span class="var">c</span>
+<span class="kw">end</span>
+ 
+<span class="kw">local function</span> <span class="fn">Load</span>(<span class="var">p</span>)
+  <span class="kw">local</span> <span class="var">ok</span>,<span class="var">d</span>=<span class="fn">pcall</span>(<span class="kw">function</span>()
+    <span class="kw">return</span> <span class="var">Store</span>:<span class="fn">GetAsync</span>(<span class="str">"u_"</span>..<span class="var">p</span>.UserId)
+  <span class="kw">end</span>)
+  <span class="kw">if</span> <span class="var">ok</span> <span class="kw">then</span>
+    <span class="var">cache</span>[<span class="var">p</span>.UserId]=<span class="var">d</span> <span class="kw">or</span> <span class="fn">deepCopy</span>(<span class="var">DEFAULT</span>)
+  <span class="kw">else</span>
+    <span class="var">p</span>:<span class="fn">Kick</span>(<span class="str">"Data load failed."</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+ 
+<span class="kw">local function</span> <span class="fn">Save</span>(<span class="var">p</span>)
+  <span class="kw">local</span> <span class="var">d</span>=<span class="var">cache</span>[<span class="var">p</span>.UserId]
+  <span class="kw">if</span> <span class="var">d</span> <span class="kw">then</span>
+    <span class="fn">pcall</span>(<span class="kw">function</span>()
+      <span class="var">Store</span>:<span class="fn">SetAsync</span>(<span class="str">"u_"</span>..<span class="var">p</span>.UserId,<span class="var">d</span>)
+    <span class="kw">end</span>)
+    <span class="var">cache</span>[<span class="var">p</span>.UserId]=<span class="kw">nil</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+ 
+<span class="var">Plrs</span>.PlayerAdded:<span class="fn">Connect</span>(<span class="var">Load</span>)
+<span class="var">Plrs</span>.PlayerRemoving:<span class="fn">Connect</span>(<span class="var">Save</span>)</code></pre>
+      <div class="cfoot">&#128190; pcall-protected saves with deep copy defaults &mdash; data that never corrupts.</div>
+    </div>
+ 
+    <div class="ccard rev" style="transition-delay:.05s">
+      <div class="ctop"><div class="dots"><span></span><span></span><span></span></div><span class="fn2">EnemyAI.lua</span><span class="ctg">AI</span></div>
+      <pre><code><span class="cm">-- Patrol / Chase / Attack AI</span>
+<span class="kw">local</span> <span class="var">PFS</span>   = <span class="fn">game</span>:<span class="fn">GetService</span>(<span class="str">"PathfindingService"</span>)
+<span class="kw">local</span> <span class="var">AGGRO</span> = <span class="num">30</span>
+<span class="kw">local</span> <span class="var">AI</span> = {}
+<span class="var">AI</span>.__index = <span class="var">AI</span>
+ 
+<span class="kw">function</span> <span class="fn">AI</span>.<span class="fn">new</span>(<span class="var">npc</span>,<span class="var">wps</span>)
+  <span class="kw">return</span> <span class="fn">setmetatable</span>({
+    <span class="prop">npc</span>=<span class="var">npc</span>, <span class="prop">waypoints</span>=<span class="var">wps</span>,
+    <span class="prop">state</span>=<span class="str">"patrol"</span>, <span class="prop">target</span>=<span class="kw">nil</span>
+  }, <span class="var">AI</span>)
+<span class="kw">end</span>
+ 
+<span class="kw">function</span> <span class="fn">AI</span>:<span class="fn">Scan</span>()
+  <span class="kw">local</span> <span class="var">pos</span>=<span class="var">self</span>.<span class="prop">npc</span>.HumanoidRootPart.Position
+  <span class="kw">for</span> _,<span class="var">p</span> <span class="kw">in</span> <span class="fn">game</span>.Players:<span class="fn">GetPlayers</span>() <span class="kw">do</span>
+    <span class="kw">local</span> <span class="var">c</span>=<span class="var">p</span>.Character
+    <span class="kw">if</span> <span class="var">c</span> <span class="kw">then</span>
+      <span class="kw">local</span> <span class="var">d</span>=(<span class="var">pos</span>-<span class="var">c</span>.HumanoidRootPart.Position).Magnitude
+      <span class="kw">if</span> <span class="var">d</span>&lt;=<span class="var">AGGRO</span> <span class="kw">then return</span> <span class="var">c</span> <span class="kw">end</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+ 
+<span class="kw">function</span> <span class="fn">AI</span>:<span class="fn">Chase</span>(<span class="var">tgt</span>)
+  <span class="kw">local</span> <span class="var">path</span>=<span class="var">PFS</span>:<span class="fn">CreatePath</span>({AgentRadius=<span class="num">2</span>})
+  <span class="var">path</span>:<span class="fn">ComputeAsync</span>(
+    <span class="var">self</span>.<span class="prop">npc</span>.HumanoidRootPart.Position,
+    <span class="var">tgt</span>.HumanoidRootPart.Position
+  )
+  <span class="kw">for</span> _,<span class="var">wp</span> <span class="kw">in</span> <span class="var">path</span>:<span class="fn">GetWaypoints</span>() <span class="kw">do</span>
+    <span class="var">self</span>.<span class="prop">npc</span>.Humanoid:<span class="fn">MoveTo</span>(<span class="var">wp</span>.Position)
+    <span class="var">self</span>.<span class="prop">npc</span>.Humanoid.MoveToFinished:<span class="fn">Wait</span>()
+  <span class="kw">end</span>
+<span class="kw">end</span>
+ 
+<span class="kw">function</span> <span class="fn">AI</span>:<span class="fn">Tick</span>()
+  <span class="var">self</span>.<span class="prop">target</span>=<span class="var">self</span>:<span class="fn">Scan</span>()
+  <span class="kw">if</span> <span class="var">self</span>.<span class="prop">target</span> <span class="kw">then</span>
+    <span class="var">self</span>.<span class="prop">state</span>=<span class="str">"chase"</span>
+    <span class="var">self</span>:<span class="fn">Chase</span>(<span class="var">self</span>.<span class="prop">target</span>)
+  <span class="kw">else</span>
+    <span class="var">self</span>.<span class="prop">state</span>=<span class="str">"patrol"</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+<span class="kw">return</span> <span class="var">AI</span></code></pre>
+      <div class="cfoot">&#129302; State machine &mdash; idles, patrols, detects players, chases with real pathfinding.</div>
+    </div>
+ 
+    <div class="ccard rev" style="transition-delay:.15s">
+      <div class="ctop"><div class="dots"><span></span><span></span><span></span></div><span class="fn2">UIController.lua</span><span class="ctg">UI / GUI</span></div>
+      <pre><code><span class="cm">-- Animated Notification + HUD System</span>
+<span class="kw">local</span> <span class="var">TS</span>  = <span class="fn">game</span>:<span class="fn">GetService</span>(<span class="str">"TweenService"</span>)
+<span class="kw">local</span> <span class="var">plr</span> = <span class="fn">game</span>.Players.LocalPlayer
+<span class="kw">local</span> <span class="var">IN</span>  = <span class="fn">TweenInfo</span>.new(<span class="num">.35</span>,<span class="fn">Enum</span>.EasingStyle.Back)
+<span class="kw">local</span> <span class="var">OUT</span> = <span class="fn">TweenInfo</span>.new(<span class="num">.25</span>,<span class="fn">Enum</span>.EasingStyle.Quad)
+<span class="kw">local</span> <span class="var">UI</span>  = {}
+ 
+<span class="kw">function</span> <span class="fn">UI</span>.<span class="fn">Notify</span>(<span class="var">msg</span>,<span class="var">color</span>,<span class="var">dur</span>)
+  <span class="kw">local</span> <span class="var">gui</span>=<span class="var">plr</span>.PlayerGui:<span class="fn">FindFirstChild</span>(<span class="str">"Notify"</span>)
+  <span class="kw">if not</span> <span class="var">gui</span> <span class="kw">then return</span> <span class="kw">end</span>
+  <span class="kw">local</span> <span class="var">n</span>=<span class="var">gui</span>.Template:<span class="fn">Clone</span>()
+  <span class="var">n</span>.Label.Text=<span class="var">msg</span>
+  <span class="var">n</span>.Frame.BackgroundColor3=<span class="var">color</span>
+  <span class="var">n</span>.Parent=<span class="var">gui</span>.Stack
+  <span class="var">n</span>.Position=<span class="fn">UDim2</span>.new(<span class="num">1.2</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>)
+  <span class="var">TS</span>:<span class="fn">Create</span>(<span class="var">n</span>,<span class="var">IN</span>,{
+    Position=<span class="fn">UDim2</span>.new(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>)
+  }):<span class="fn">Play</span>()
+  <span class="fn">task</span>.<span class="fn">delay</span>(<span class="var">dur</span> <span class="kw">or</span> <span class="num">3</span>,<span class="kw">function</span>()
+    <span class="kw">local</span> <span class="var">t</span>=<span class="var">TS</span>:<span class="fn">Create</span>(<span class="var">n</span>,<span class="var">OUT</span>,{
+      Position=<span class="fn">UDim2</span>.new(<span class="op">-</span><span class="num">1.2</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>)
+    })
+    <span class="var">t</span>:<span class="fn">Play</span>()
+    <span class="var">t</span>.Completed:<span class="fn">Connect</span>(<span class="kw">function</span>()
+      <span class="var">n</span>:<span class="fn">Destroy</span>()
+    <span class="kw">end</span>)
+  <span class="kw">end</span>)
+<span class="kw">end</span>
+ 
+<span class="kw">function</span> <span class="fn">UI</span>.<span class="fn">SetHealth</span>(<span class="var">hp</span>,<span class="var">max</span>)
+  <span class="kw">local</span> <span class="var">bar</span>=<span class="var">plr</span>.PlayerGui.HUD.HealthBar
+  <span class="var">TS</span>:<span class="fn">Create</span>(<span class="var">bar</span>,<span class="var">IN</span>,{
+    Size=<span class="fn">UDim2</span>.new(<span class="var">hp</span>/<span class="var">max</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>)
+  }):<span class="fn">Play</span>()
+<span class="kw">end</span>
+<span class="kw">return</span> <span class="var">UI</span></code></pre>
+      <div class="cfoot">&#128421;&#65039; Slide-in/out notifications with Back easing + live health bar tweening.</div>
+    </div>
+ 
+  </div>
+</div>
+</div>
+ 
+<!-- PRICING -->
+<div id="pricing" class="svb" style="position:relative;z-index:10">
+<div class="sw">
+  <div class="sh rev"><span class="sn">04</span><h2 class="st">Pricing</h2><div class="sl"></div></div>
+  <p class="rev" style="text-align:center;color:var(--muted);margin-bottom:3rem;font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:3px">STARTING AT $20 &middot; ALWAYS NEGOTIABLE</p>
+  <div class="pw">
+    <div class="pcard rev">
+      <div class="ptier">Starter</div>
+      <div class="pbig"><sup>$</sup>20</div>
+      <div class="pnote">Starting Price &middot; Negotiable</div>
+      <ul class="plist">
+        <li>Single Script or Feature</li>
+        <li>1 Round of Revisions</li>
+        <li>Basic Anti-Exploit</li>
+        <li>3 Day Delivery</li>
+      </ul>
+      <a href="#contact" class="btn btn-neon" style="width:100%;text-align:center;display:block">Get Started</a>
+    </div>
+    <div class="pcard feat rev" style="transition-delay:.1s">
+      <div class="fg"></div><div class="fi"></div>
+      <div class="flbl">&#9733; POPULAR</div>
+      <div class="ptier" style="margin-top:1.2rem">Pro</div>
+      <div class="pbig"><sup>$</sup>20<span style="font-size:1.5rem;color:var(--muted)">+</span></div>
+      <div class="pnote">Custom Quote &middot; Negotiable</div>
+      <ul class="plist">
+        <li>Full Game System</li>
+        <li>3 Rounds of Revisions</li>
+        <li>Anti-Exploit Built-In</li>
+        <li>Modular Clean Code</li>
+        <li>5&ndash;7 Day Delivery</li>
+      </ul>
+      <a href="#contact" class="btn btn-fire" style="width:100%;text-align:center;display:block">Commission Now</a>
+    </div>
+  </div>
+  <div class="rev" style="margin-top:2.5rem;text-align:center;max-width:540px;margin-left:auto;margin-right:auto;padding:1.2rem;border:1px dashed rgba(0,255,231,.14)">
+    <p style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:1px;line-height:1.9">All prices are negotiable depending on scope. Pay via Robux or PayPal. DM me and we&rsquo;ll figure it out.</p>
+  </div>
+</div>
+</div>
+ 
+<!-- NOT JUST ROBLOX -->
+<div id="also" style="position:relative;z-index:10;border-top:1px solid var(--border)">
+<div class="sw">
+  <div class="sh rev"><span class="sn">04.5</span><h2 class="st">Not Just Roblox</h2><div class="sl"></div></div>
+  <p class="also-intro rev">Roblox is where I work most, but it&rsquo;s not all I know. I&rsquo;ve spent time outside of Lua &mdash; picked up things that actually make me <em>better</em> at the scripting too.</p>
+  <div class="also-grid">
+    <div class="also-card rev">
+      <span class="also-icon">&#127760;</span>
+      <div class="also-name">Web Dev</div>
+      <div class="also-tags">
+        <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span><span class="tag">React</span>
+      </div>
+      <p class="also-desc">Built sites from scratch. Layouts, animations, APIs &mdash; comfortable making things look good and work properly.</p>
+    </div>
+    <div class="also-card rev" style="transition-delay:.08s">
+      <span class="also-icon">&#128268;</span>
+      <div class="also-name">Embedded Systems</div>
+      <div class="also-tags">
+        <span class="tag">C / C++</span><span class="tag">Arduino</span><span class="tag">Microcontrollers</span><span class="tag">Serial</span>
+      </div>
+      <p class="also-desc">Low-level hardware programming &mdash; sensors, controllers, real-time logic. A different world from game dev but the thinking transfers.</p>
+    </div>
+    <div class="also-card rev" style="transition-delay:.16s">
+      <span class="also-icon">&#9881;&#65039;</span>
+      <div class="also-name">General Programming</div>
+      <div class="also-tags">
+        <span class="tag">Python</span><span class="tag">Logic</span><span class="tag">Algorithms</span><span class="tag">Problem Solving</span>
+      </div>
+      <p class="also-desc">Scripting, automation, data wrangling. I know how to think through a problem regardless of what language it&rsquo;s in.</p>
+    </div>
+  </div>
+</div>
+</div>
+ 
+<!-- CONTACT -->
+<div id="contact" style="position:relative;z-index:10;border-top:1px solid var(--border)">
+<div class="sw">
+  <div class="sh rev"><span class="sn">05</span><h2 class="st">Get In Touch</h2><div class="sl"></div></div>
+  <div class="cntg">
+    <div class="rev">
+      <p class="cintro">Check the availability window first, then reach out. I usually reply same day on Discord. Tell me what you need and we&rsquo;ll go from there.</p>
+      <div class="clinks">
+        <a href="mailto:devcodez456&#64;gmail.com" class="clink"><span class="cico">&#128231;</span>devcodez456&#64;gmail.com</a>
+        <a href="https://discord.com/users/communistcat" target="_blank" class="clink"><span class="cico">&#128172;</span>Discord: communistcat</a>
+        <a href="https://github.com/devcodez674" target="_blank" class="clink"><span class="cico">&#128025;</span>GitHub: devcodez674</a>
+      </div>
+    </div>
+    <div class="cform rev" style="transition-delay:.1s">
+      <div><label class="flbl">Your Name</label><input type="text" class="finp" placeholder="John Doe"></div>
+      <div><label class="flbl">Discord / Contact</label><input type="text" class="finp" placeholder="username"></div>
+      <div><label class="flbl">What do you need?</label><textarea class="ftxt" placeholder="Describe your project &mdash; game type, features, deadline, budget..."></textarea></div>
+      <button class="btn btn-neon" style="width:100%;font-size:.82rem" onclick="alert('For fastest response, DM on Discord: communistcat')">Send Commission Request &#8594;</button>
+    </div>
+  </div>
+</div>
+</div>
+ 
+<footer>
+  <div class="flogo">AK_</div>
+  <p>&#169; 2025 <span style="color:var(--c1)">Abhay Krishna</span> &mdash; Roblox Lua Scripter</p>
+  <p>Built from scratch<span style="color:var(--c1);animation:blink 1s step-end infinite">_</span></p>
+</footer>
+ 
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=(mx-4)+'px';cur.style.top=(my-4)+'px';
+});
+(function loop(){
+  rx+=(mx-rx-16)*.13;ry+=(my-ry-16)*.13;
+  cur2.style.left=rx+'px';cur2.style.top=ry+'px';
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform='scale(3)';cur2.style.transform='scale(1.4)';cur.style.background='var(--c2)';cur2.style.borderColor='var(--c2)'});
+  el.addEventListener('mouseleave',()=>{cur.style.transform='scale(1)';cur2.style.transform='scale(1)';cur.style.background='var(--c1)';cur2.style.borderColor='var(--c1)'});
+});
+ 
+// PARTICLE CANVAS
+const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
+let W,H;
+const COLS=['#00ffe7','#ff003c','#ffe600','#00ffe7','#00ffe7'];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+class P{
+  constructor(first){
+    this.x=Math.random()*W;
+    this.y=first?Math.random()*H:-10;
+    this.vy=.4+Math.random()*1.4;
+    this.vx=(Math.random()-.5)*.4;
+    this.r=.5+Math.random()*1.5;
+    this.col=COLS[Math.floor(Math.random()*COLS.length)];
+    this.a=.08+Math.random()*.4;
+  }
+  tick(){this.y+=this.vy;this.x+=this.vx;if(this.y>H+10){this.y=-10;this.x=Math.random()*W}}
+  draw(){
+    ctx.save();ctx.globalAlpha=this.a;
+    ctx.fillStyle=this.col;ctx.shadowColor=this.col;ctx.shadowBlur=8;
+    ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+}
+const pts=Array.from({length:200},(_,i)=>new P(true));
+let mpx=innerWidth/2,mpy=innerHeight/2;
+document.addEventListener('mousemove',e=>{mpx=e.clientX;mpy=e.clientY});
+function grid(){
+  ctx.strokeStyle='rgba(0,255,231,0.025)';ctx.lineWidth=1;
+  const s=65;
+  for(let x=0;x<W;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+  for(let y=0;y<H;y+=s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);grid();
+  pts.forEach(p=>{
+    const dx=p.x-mpx,dy=p.y-mpy,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<80){const f=(80-dist)/80;p.x+=dx/dist*f*2;p.y+=dy/dist*f*2}
+    p.tick();p.draw();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+ 
+// SCROLL REVEAL
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rev').forEach(el=>obs.observe(el));
+ 
+// SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth'});
+  });
+});
+ 
+// 3D TILT
+document.querySelectorAll('.svc,.ccard,.pcard,.also-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width-.5)*16;
+    const y=((e.clientY-r.top)/r.height-.5)*-16;
+    card.style.transform=`perspective(700px) rotateX(${y}deg) rotateY(${x}deg) translateY(-6px)`;
+  });
+  card.addEventListener('mouseleave',()=>{card.style.transform=''});
+});
+ 
+// TERMINAL REVEAL
+document.querySelectorAll('.tl').forEach((l,i)=>{
+  l.style.opacity='0';
+  setTimeout(()=>{l.style.transition='opacity .3s';l.style.opacity='1'},1100+i*160);
+});
+ 
+// GLITCH SPEED ON HOVER
+const gn=document.querySelector('.glitch');
+if(gn){
+  gn.addEventListener('mouseenter',()=>{gn.style.animationDuration='.3s'});
+  gn.addEventListener('mouseleave',()=>{gn.style.animationDuration='5s'});
+}
+</script>
 </body>
 </html>
+ 
